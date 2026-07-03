@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["wa_session/*", "uploads/*", "src/**/*.js"],
+  "exec": "ts-node src/App.ts"
+}

@@ -1,0 +1,223 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique @db.VarChar(150)
+  username String @unique @db.VarChar(25)
+  password String
+  fullName String @db.VarChar(50)
+
+  role          String  @default("user")
+  no_handphone  String? @db.VarChar(20)
+  address       String? @db.Text
+  profilePic    String? @db.Text
+  adminDuration String?
+
+  country String? @db.VarChar(100)
+  device  String? @db.VarChar(50)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  products Product[]
+  blogs    Blog[]
+
+  orders        Order[]
+  subscriptions Subscription[]
+  siteAnalytics SiteAnalytic[]
+  expenses      Expense[]
+
+  perfumeLikes PerfumeLike[]
+
+  @@map("users")
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String   @db.VarChar(250)
+  brand          String?  @db.VarChar(250)
+  type           String?  @db.VarChar(500)
+  description    String?  @db.VarChar(500)
+  price          Float?
+  stock          String?  @db.VarChar(500)
+  imageUrl       String?  @db.VarChar(250)
+  notes          String?  @db.VarChar(250)
+  longevity      String?  @db.VarChar(250)
+  sillage        String?  @db.VarChar(250)
+  projection     String?  @db.VarChar(250)
+  usage_time     String?  @db.VarChar(250)
+  blind_buy_safe Boolean? @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  users      User[]
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+model Blog {
+  id          String    @id @default(uuid())
+  title       String    @db.VarChar(250)
+  content     String    @db.Text
+  excerpt     String    @db.Text
+  category    String?   @db.VarChar(150)
+  author      String?   @db.VarChar(150)
+  approval    Boolean?  @default(false)
+  likes       Int?      @default(0)
+  imageUrl    String?   @db.Text
+  imageUrl2   String?   @db.Text
+  imageUrl3   String?   @db.Text
+  publishDate DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  users User[]
+
+  @@map("blogs")
+}
+
+enum Category {
+  LIFESTYLE
+  POLITIC
+  SPORT
+  FASHION
+  RELIGIOUS
+}
+
+model Order {
+  id           String  @id @default(uuid())
+  orderNumber  String  @unique @db.VarChar(50)
+  totalAmount  Float
+  profitAmount Float
+  status       String  @default("Pending") @db.VarChar(50)
+  note         String? @db.VarChar(500)
+
+  userId String
+  user   User        @relation(fields: [userId], references: [id])
+  items  OrderItem[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  quantity Int    @default(1)
+  price    Float
+
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("order_items")
+}
+
+model Subscription {
+  id        String    @id @default(uuid())
+  plan      String    @db.VarChar(100)
+  status    String    @default("Active") @db.VarChar(50)
+  expiredAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+model Expense {
+  id          String  @id @default(uuid())
+  amount      Float
+  description String? @db.VarChar(250)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("expenses")
+}
+
+model SiteAnalytic {
+  id         String  @id @default(uuid())
+  sessionId  String  @db.VarChar(150)
+  deviceType String  @db.VarChar(50)
+  country    String? @db.VarChar(100)
+  pageUrl    String? @db.VarChar(250)
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([deviceType])
+  @@index([country])
+  @@map("site_analytics")
+}
+
+model Perfume {
+  id          String  @id @default(uuid())
+  name        String  @db.VarChar(250)
+  brand       String  @db.VarChar(250)
+  category    String  @db.VarChar(100)
+  description String? @db.Text
+  imageUrl    String? @db.Text
+  gender      String? @db.VarChar(50)
+  year        Int?
+  totalLikes  Int     @default(0)
+  notes       String? @db.Text
+
+  likes PerfumeLike[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([category])
+  @@index([totalLikes])
+  @@map("perfumes")
+}
+
+model PerfumeLike {
+  id String @id @default(uuid())
+
+  perfumeId String
+  perfume   Perfume @relation(fields: [perfumeId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([perfumeId, userId])
+  @@map("perfume_likes")
+}
+

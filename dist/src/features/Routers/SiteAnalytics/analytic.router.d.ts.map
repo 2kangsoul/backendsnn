@@ -1,0 +1,1 @@
+{"version":3,"file":"analytic.router.d.ts","sourceRoot":"","sources":["../../../../../src/features/Routers/SiteAnalytics/analytic.router.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAGjC,qBAAa,cAAc;IACzB,OAAO,CAAC,MAAM,CAAS;IACvB,OAAO,CAAC,kBAAkB,CAAqB;;IAQ/C,OAAO,CAAC,gBAAgB;IAKxB,SAAS,IAAI,MAAM;CAGpB"}
