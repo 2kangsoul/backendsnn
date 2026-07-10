@@ -2,4 +2,12 @@ node_modules
 # Keep environment variables out of version control
 .env
 
+# Build output
+dist
 /generated/prisma
+
+# WhatsApp (Baileys) session credentials — SECRET, never commit
+wa_session
+
+# User uploads
+uploads

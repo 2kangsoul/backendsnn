@@ -20,13 +20,17 @@ import { transporter } from "./config/mailer";
 import cors from "cors";
 import path from "path";
 
-const PORT: number = 8000;
+const PORT: number = Number(process.env.PORT) || 8000;
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    // ponytail: Next dev :3000 + Vite lama :5173. CORS_ORIGIN (comma-separated) menang di prod.
+    origin: process.env.CORS_ORIGIN?.split(",") ?? [
+      "http://localhost:3000",
+      "http://localhost:5173",
+    ],
     credentials: true,
   }),
 );
