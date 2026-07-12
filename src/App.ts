@@ -12,12 +12,11 @@ import expenseRouter from "./features/Routers/Expense/Expense.Routes";
 import perfumeRouter from "./features/Routers/Perfume/Perfume.Routes";
 import monthlyUsersRoute from "./features/Routers/MonthlyUsers/monthlyUsers.route";
 import { verifyToken } from "./Middleware/verifyToken";
-import { initWhatsApp } from "./config/whatsapp";
-import waRouter from "./features/Routers/Whtasapp/Whatsapp.Routers";
 import salesReportRouter from "../src/features/Routers/SalesReport/SalesReport.Routes";
 
 import { transporter } from "./config/mailer";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import path from "path";
 
 const PORT: number = Number(process.env.PORT) || 8000;
@@ -35,6 +34,7 @@ app.use(
   }),
 );
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
@@ -55,7 +55,6 @@ app.use("/api/signups", signUpRouter);
 app.use("/api/expenses", expenseRouter);
 app.use("/api/perfumes", perfumeRouter);
 app.use("/api/monthly-users", monthlyUsersRoute);
-app.use("/api/wa", waRouter);
 app.use("/api/ai", salesReportRouter);
 
 app.post(
@@ -133,8 +132,6 @@ app.get("/api/villages/:id", async (req: Request, res: Response) => {
   res.status(200).json(data);
 });
 
-// ── Start server + WA Bot ─────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`[⚡ APP] Application is running on port: ${PORT}`);
-  initWhatsApp(); // ← init Baileys, QR muncul di terminal
 });

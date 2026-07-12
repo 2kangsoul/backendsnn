@@ -6,8 +6,6 @@ node_modules
 dist
 /generated/prisma
 
-# WhatsApp (Baileys) session credentials — SECRET, never commit
-wa_session
 
 # User uploads
 uploads

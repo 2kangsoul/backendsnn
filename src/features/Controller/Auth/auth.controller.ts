@@ -4,6 +4,10 @@ import { AuthService } from "../../Services/Auth/AuthServices";
 import { RegisterInput, LoginInput } from "../../Models/Auth/AuthModels";
 import jwt from "jsonwebtoken";
 import { verifyToken } from "../../../Middleware/verifyToken";
+import {
+  AUTH_COOKIE_NAME,
+  authCookieOptions,
+} from "../../../config/cookieOptions";
 
 // Fungsi untuk register
 export const register = async (req: Request, res: Response): Promise<any> => {
@@ -63,9 +67,12 @@ export const login = async (req: Request, res: Response): Promise<any> => {
       { expiresIn: "1d" },
     );
 
+    // Kirim token lewat httpOnly cookie — TIDAK lagi di response body,
+    // supaya token tidak bisa diakses/disimpan JS di sisi client (localStorage dkk).
+    res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions);
+
     return res.status(StatusCodes.OK).json({
       message: "Login berhasil!",
-      token: token,
       data: {
         id: user.id,
         email: user.email,
@@ -78,6 +85,7 @@ export const login = async (req: Request, res: Response): Promise<any> => {
       },
     });
   } catch (error: any) {
+    console.error("❌ [Login] Error:", error);
     if (error.message === "Kredensial tidak valid!") {
       return res
         .status(StatusCodes.UNAUTHORIZED)
@@ -87,6 +95,17 @@ export const login = async (req: Request, res: Response): Promise<any> => {
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Terjadi kesalahan pada server" });
   }
+};
+export const logout = async (req: Request, res: Response): Promise<any> => {
+  // Opsi harus sama persis dengan waktu res.cookie() di login (kecuali maxAge),
+  // kalau tidak browser tidak akan menghapus cookie-nya.
+  res.clearCookie(AUTH_COOKIE_NAME, {
+    httpOnly: authCookieOptions.httpOnly,
+    secure: authCookieOptions.secure,
+    sameSite: authCookieOptions.sameSite,
+    path: authCookieOptions.path,
+  });
+  return res.status(StatusCodes.OK).json({ message: "Logout berhasil!" });
 };
 
 // FUNGSI BARU: Mengambil data user yang sedang login
