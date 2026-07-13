@@ -51,7 +51,7 @@ model Product {
   type           String?  @db.VarChar(500)
   description    String?  @db.VarChar(500)
   price          Float?
-  stock          String?  @db.VarChar(500)
+  stock          Int      @default(0)
   imageUrl       String?  @db.VarChar(250)
   notes          String?  @db.VarChar(250)
   longevity      String?  @db.VarChar(250)

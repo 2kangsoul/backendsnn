@@ -39,7 +39,6 @@ export const AuthService = {
     return user;
   },
 
-  // ← tambah ini
   findById: async (id: string) => {
     return await AuthRepository.findUserById(id);
   },

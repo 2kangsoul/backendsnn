@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config(); 
 import express, { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { authRouter } from "./features/Routers/Auth/auth.router";
@@ -18,6 +20,8 @@ import { transporter } from "./config/mailer";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { ErrorMiddleware } from "./Middleware/errorMiddleware";
+import { orderRoute } from "./features/Order/order.route";
 
 const PORT: number = Number(process.env.PORT) || 8000;
 
@@ -56,6 +60,8 @@ app.use("/api/expenses", expenseRouter);
 app.use("/api/perfumes", perfumeRouter);
 app.use("/api/monthly-users", monthlyUsersRoute);
 app.use("/api/ai", salesReportRouter);
+app.use("/api/order" , orderRoute)
+app.use(ErrorMiddleware.handle);
 
 app.post(
   "/api/send-email",
