@@ -1,5 +1,5 @@
-import { ZodType, ZodError } from "zod";
-import { BadRequestError } from "../features/error/BadRequest";
+import { ZodType, ZodError } from 'zod';
+import { BadRequestError } from '../error/bad.request';
 
 export function validate<T>(
   schema: ZodType<T>,

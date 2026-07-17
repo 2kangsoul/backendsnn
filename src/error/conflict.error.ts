@@ -1,4 +1,4 @@
-import { AppError } from "./App.error";
+import { AppError } from "./app.error";
 export class ConflictError extends AppError {
   constructor(message: string) {
     super(409, message);
