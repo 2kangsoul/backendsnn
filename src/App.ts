@@ -1,8 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config(); 
 import express, { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { authRouter } from "./features/Routers/Auth/auth.router";
 import { userRouter } from "./features/Routers/user/User.Routes";
-import { productRouter } from "./features/Routers/Product/Product.routers";
 import { blogRouter } from "./features/Routers/Blog/Blog.Routers";
 import { AnalyticRouter } from "./features/Routers/SiteAnalytics/analytic.router";
 import subscriptionRouter from "./features/Routers/Subscription/Subscription.Routers";
@@ -18,6 +18,11 @@ import { transporter } from "./config/mailer";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { ErrorMiddleware } from "./Middleware/errorMiddleware";
+import { orderRoute } from "./features/Order/order.routes";
+import { RouterAcoount } from "./features/Auth/auth.routes";
+import { routerAdmin } from "./features/SAdminManagement/SadminManagementRoutes";
+import { productsRoute } from "./features/Product/product.routes";
 
 const PORT: number = Number(process.env.PORT) || 8000;
 
@@ -41,10 +46,8 @@ app.get("/", (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ message: "Hello, world!" });
 });
 
-app.use("/api/auth", authRouter);
 app.use("/api/users", verifyToken, userRouter);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-app.use("/api/products", productRouter);
 app.use("/api/blogs", blogRouter);
 
 const analyticRouter = new AnalyticRouter();
@@ -56,6 +59,10 @@ app.use("/api/expenses", expenseRouter);
 app.use("/api/perfumes", perfumeRouter);
 app.use("/api/monthly-users", monthlyUsersRoute);
 app.use("/api/ai", salesReportRouter);
+app.use("/api/auth", RouterAcoount);
+app.use("/api/order" , orderRoute)
+app.use("/api/product",productsRoute)
+app.use(ErrorMiddleware.handle);
 
 app.post(
   "/api/send-email",

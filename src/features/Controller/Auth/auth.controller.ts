@@ -67,8 +67,6 @@ export const login = async (req: Request, res: Response): Promise<any> => {
       { expiresIn: "1d" },
     );
 
-    // Kirim token lewat httpOnly cookie — TIDAK lagi di response body,
-    // supaya token tidak bisa diakses/disimpan JS di sisi client (localStorage dkk).
     res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions);
 
     return res.status(StatusCodes.OK).json({
