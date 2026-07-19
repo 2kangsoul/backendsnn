@@ -21,7 +21,7 @@ model User {
   adminDuration String?
   no_handphone  String        @unique @db.VarChar(20)
   profilePic    String?
-  role          String         @default("user")
+  role          Role           @default(USER)
   country       String?        @db.VarChar(100)
   device        String?        @db.VarChar(50)
   expenses      Expense[]
