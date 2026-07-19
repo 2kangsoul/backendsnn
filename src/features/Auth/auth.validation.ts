@@ -18,22 +18,28 @@ export class authValidation {
         .max(50, "Fullname must be at most 50 characthers"),
       password: z
         .string()
-        .min(1, "Password is required." )
+        .min(1, "Password is required.")
         .min(8, "Password must be at least 8 characters.")
-        .max(20, "Password must be at most 20 characthers" )
+        .max(20, "Password must be at most 20 characthers"),
+      contact: z
+        .string()
+        .trim()
+        .min(10, "Phone number at least must be at 10 digits")
+        .max(20, "Phone number at least must be at 20 digits")
+        .regex(/^\d+$/, "Phone number must contain only digits"),
     }),
   });
   static readonly LOGIN_ACCOUNT = z.object({
     body: z.object({
-        email: z
+      email: z
         .string()
         .email("Please enter a valid email address.")
         .transform((email) => email.trim().toLocaleLowerCase()),
-        password: z
-        .string()
-        .min(1, "Password is required." )
-    })
-  })
+      password: z.string().min(1, "Password is required."),
+    }),
+  });
 }
-export type LoginAccountInput = z.infer<typeof authValidation.LOGIN_ACCOUNT>
-export type RegisterAccountInput = z.infer<typeof authValidation.REGISTER_ACCOUNT>
+export type LoginAccountInput = z.infer<typeof authValidation.LOGIN_ACCOUNT>;
+export type RegisterAccountInput = z.infer<
+  typeof authValidation.REGISTER_ACCOUNT
+>;

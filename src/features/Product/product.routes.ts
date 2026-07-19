@@ -17,7 +17,7 @@ productsRoute.patch(
   upload.single("image"),
   ProductsController.updateProducts,
 );
-productsRoute.get("/get", ProductsController.getProducts); // browse tetap publik
+productsRoute.get("/get", ProductsController.getProducts);
 productsRoute.get("/get/:id", ProductsController.getProductById);
 productsRoute.delete(
   "/delete/:id",
