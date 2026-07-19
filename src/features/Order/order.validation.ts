@@ -16,7 +16,6 @@ export class OrderValidation {
     params: z.object({
       id: z.string().uuid("Invalid order id"),
     }),
-
     body: z.object({
       status: z.enum([
         "PENDING",
@@ -28,7 +27,6 @@ export class OrderValidation {
       ]),
     }),
   });
-
   static readonly DeleteOrder = z.object({
     params: z.object({
       id: z.string().uuid("Invalid order id"),
@@ -39,7 +37,6 @@ export type CreateOrderInput =
   z.infer<typeof OrderValidation.CreateOrder> & {
     userId: string;
   };
-
 export type UpdateOrderStatusInput =
   z.infer<typeof OrderValidation.UpdateOrderStatus>;
 

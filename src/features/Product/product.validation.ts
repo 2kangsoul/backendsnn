@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { PRODUCT_SORT_BY, PRODUCT_SORT_ORDER } from "./constans";
-
 export class ProductsValidation {
   static readonly createProdcuts = z.object({
     body: z.object({
@@ -13,13 +12,11 @@ export class ProductsValidation {
       stock: z.coerce.number().int().min(0),
     }),
   });
-
   static readonly getProductByIdSchema = z.object({
     params: z.object({
       id: z.string().uuid("Invalid product id"),
     }),
   });
-
   static readonly updateProducts = z.object({
     params: z.object({
       id: z.string().uuid("Invalid product id"),
@@ -33,13 +30,11 @@ export class ProductsValidation {
       stock: z.coerce.number().int().min(0).optional(),
     }),
   });
-
   static readonly deleteProducts = z.object({
     params: z.object({
       id: z.string().uuid("Invalid product id"),
     }),
   });
-
   static readonly getProdcuts = z.object({
     query: z.object({
       page: z.coerce.number().int().min(1).default(1),
@@ -54,7 +49,6 @@ export class ProductsValidation {
         (val) => (val === "" ? undefined : val),
         z.string().trim().optional(),
       ),
-
       type: z.preprocess(
         (val) => (val === "" ? undefined : val),
         z.string().trim().optional(),

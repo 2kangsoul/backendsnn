@@ -2,7 +2,6 @@ import prisma from "../../prisma";
 import { generateOrderNumber } from "../../helper/generatedOrder/generatedOrderNumber";
 import { NotFoundError } from "../../error/not-found-error";
 import { BadRequestError } from "../../error/bad.request";
-
 import {
   CreateOrderInput,
   UpdateOrderStatusInput,
@@ -12,25 +11,20 @@ import {
 export class OrderService {
   static async createOrder({ body, userId }: CreateOrderInput) {
     const { productId, quantity, note } = body;
-
     const createdOrder = await prisma.$transaction(
       async (tx) => {
         const product = await tx.product.findUnique({
           where: { id: productId },
         });
-
         if (!product || product.deletedAt) {
           throw new NotFoundError("Product not found");
         }
-
         if (product.stock < quantity) {
           throw new BadRequestError(
             `Stock ${product.name} is not enough, remaining ${product.stock}`,
           );
         }
-
         const totalAmount = product.price * quantity;
-
         const order = await tx.order.create({
           data: {
             orderNumber: generateOrderNumber(),
@@ -46,7 +40,6 @@ export class OrderService {
             },
           },
         });
-
         await tx.product.update({
           where: { id: product.id },
           data: { stock: { decrement: quantity } },
@@ -58,8 +51,6 @@ export class OrderService {
         timeout: 15000,
       },
     );
-
-    // refetch di luar transaksi, cuma buat lengkapin response
     return prisma.order.findUnique({
       where: { id: createdOrder.id },
       include: {
@@ -108,22 +99,18 @@ export class OrderService {
       orderBy: { createdAt: "desc" },
     });
   }
-
   static async updateStatus({ params, body }: UpdateOrderStatusInput) {
     const order = await prisma.order.findFirst({
       where: { id: params.id, deletedAt: null },
     });
-
     if (!order) {
       throw new NotFoundError("Order not found");
     }
-
     return prisma.order.update({
       where: { id: params.id },
       data: { status: body.status },
     });
   }
-
   static async deleteOrder({ params }: DeleteOrderInput) {
     const order = await prisma.order.findFirst({
       where: { id: params.id, deletedAt: null },
@@ -132,7 +119,6 @@ export class OrderService {
     if (!order) {
       throw new NotFoundError("Order not found");
     }
-
     return prisma.order.update({
       where: { id: params.id },
       data: { deletedAt: new Date() },

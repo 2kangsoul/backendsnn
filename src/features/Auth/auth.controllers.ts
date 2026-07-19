@@ -3,7 +3,6 @@ import { validate } from "../../validate/validate";
 import { AuthServices } from "./auth.services";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { success } from "zod";
 export class AuthControllers {
   static async RegisterAccount(req: Request, res: Response) {
     const { body } = validate(authValidation.REGISTER_ACCOUNT, {

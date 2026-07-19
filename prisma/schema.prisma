@@ -19,7 +19,7 @@ model User {
   deletedAt     DateTime?
   address       String?
   adminDuration String?
-  no_handphone  String?        @db.VarChar(20)
+  no_handphone  String        @unique @db.VarChar(20)
   profilePic    String?
   role          String         @default("user")
   country       String?        @db.VarChar(100)
