@@ -5,10 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { userRouter } from "./features/Routers/user/User.Routes";
 import { blogRouter } from "./features/Routers/Blog/Blog.Routers";
 import { AnalyticRouter } from "./features/Routers/SiteAnalytics/analytic.router";
-import subscriptionRouter from "./features/Routers/Subscription/Subscription.Routers";
 import orderRouter from "./features/Routers/Order/Order.Routers";
-import signUpRouter from "./features/Routers/SignUp/SignUp.Routes";
-import expenseRouter from "./features/Routers/Expense/Expense.Routes";
 import perfumeRouter from "./features/Routers/Perfume/Perfume.Routes";
 import monthlyUsersRoute from "./features/Routers/MonthlyUsers/monthlyUsers.route";
 import { verifyToken } from "./Middleware/verifyToken";
@@ -33,6 +30,7 @@ app.use(
     // ponytail: Next dev :3000 + Vite lama :5173. CORS_ORIGIN (comma-separated) menang di prod.
     origin: process.env.CORS_ORIGIN?.split(",") ?? [
       "http://localhost:3000",
+      "http://localhost:3001",
       "http://localhost:5173",
     ],
     credentials: true,
@@ -52,16 +50,16 @@ app.use("/api/blogs", blogRouter);
 
 const analyticRouter = new AnalyticRouter();
 app.use("/api/analytics", analyticRouter.getRouter());
-app.use("/api/subscriptions", subscriptionRouter);
-app.use("/api/orders", orderRouter);
-app.use("/api/signups", signUpRouter);
-app.use("/api/expenses", expenseRouter);
 app.use("/api/perfumes", perfumeRouter);
+app.use("/api/orders", orderRouter);
 app.use("/api/monthly-users", monthlyUsersRoute);
+// ponytail: /signups/data alias ke /monthly-users/summary, reuse same route
+app.use("/api/signups", monthlyUsersRoute);
 app.use("/api/ai", salesReportRouter);
-app.use("/api/auth", RouterAcoount);
+app.use("/api/auth", RouterAcoount)
 app.use("/api/order" , orderRoute)
 app.use("/api/product",productsRoute)
+app.use("/api/admin", routerAdmin)
 app.use(ErrorMiddleware.handle);
 
 app.post(

@@ -13,7 +13,6 @@ export class AnalyticRouter {
 
   private initializeRoutes(): void {
     this.router.get("/pageviews", this.analyticController.getPageviews);
-    this.router.get("/sessions", this.analyticController.getTotalSessions); // ✅ Tambahan baru
   }
 
   getRouter(): Router {

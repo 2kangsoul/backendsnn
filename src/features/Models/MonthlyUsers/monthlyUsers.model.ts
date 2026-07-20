@@ -34,15 +34,6 @@ export interface MonthlyUsersSummary {
 }
 
 /**
- * Device breakdown (sourced from User.device field and SiteAnalytic.deviceType)
- */
-export interface UsersByDevice {
-  deviceType: string;   // e.g. "Desktop", "Phone app", "Laptop"
-  count: number;
-  percentage: number;
-}
-
-/**
  * Country breakdown (sourced from User.country field)
  */
 export interface UsersByCountry {
@@ -56,9 +47,8 @@ export interface UsersByCountry {
  */
 export interface RealtimeOverview {
   totalUsers: number;
-  byDevice: UsersByDevice[];
   byCountry: UsersByCountry[];
-  lastUpdated: string;  // ISO timestamp
+  lastUpdated: string;
 }
 
 /**
@@ -66,13 +56,6 @@ export interface RealtimeOverview {
  */
 export interface UserCreatedAt {
   createdAt: Date;
-}
-
-/**
- * Prisma-shaped User select for device grouping
- */
-export interface UserDevice {
-  device: string | null;
 }
 
 /**

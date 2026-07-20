@@ -29,7 +29,7 @@ userRouter.get("/", async (req: Request, res: Response): Promise<any> => {
   try {
     const { role, email } = req.query;
 
-    const whereClause: any = {};
+    const whereClause: any = { deletedAt: null };
     if (role) whereClause.role = String(role);
     if (email) whereClause.email = String(email);
 
@@ -66,7 +66,7 @@ userRouter.post(
         .json({ success: false, message: "Tidak ada file yang diupload" });
     }
 
-    const fileUrl = `http://localhost:8000/uploads/profile_pictures/${req.file.filename}`;
+    const fileUrl = `${process.env.APP_URL || "http://localhost:8000"}/uploads/profile_pictures/${req.file.filename}`;
     return res.status(200).json({
       success: true,
       data: { fileUrl },
@@ -86,8 +86,8 @@ userRouter.get("/:id", async (req: Request, res: Response): Promise<any> => {
       return res.status(400).json({ message: "User ID tidak valid." });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: String(userId) },
+    const user = await prisma.user.findFirst({
+      where: { id: String(userId), deletedAt: null },
       select: {
         id: true,
         email: true,
@@ -177,8 +177,10 @@ userRouter.delete("/:id", async (req: Request, res: Response): Promise<any> => {
       return res.status(400).json({ message: "User ID tidak valid." });
     }
 
-    await prisma.user.delete({
+    // ponytail: soft-delete (PRD 5.3) — isi deletedAt, jangan hard delete.
+    await prisma.user.update({
       where: { id: userId },
+      data: { deletedAt: new Date() },
     });
 
     return res.status(200).json({ message: "User berhasil dihapus!" });

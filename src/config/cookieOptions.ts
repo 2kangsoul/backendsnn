@@ -8,7 +8,8 @@ export const AUTH_COOKIE_NAME = "token";
 export const authCookieOptions: CookieOptions = {
   httpOnly: true, // JS di browser tidak bisa baca/tulis cookie ini (mitigasi XSS)
   secure: process.env.NODE_ENV === "production", // wajib true kalau sudah pakai HTTPS
-  sameSite: "lax", // cukup untuk localhost:3000 <-> localhost:8000; tinjau ulang kalau nanti beda domain asli
+  // ponytail: "none"+secure wajib untuk cross-domain (Vercel <-> backend). "lax" hanya untuk same-domain.
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
   maxAge: 24 * 60 * 60 * 1000, // 1 hari, samakan dengan expiresIn JWT di auth.controller.ts
 };

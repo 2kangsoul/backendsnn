@@ -5,11 +5,8 @@ const router = Router();
 const orderController = new OrderController();
 
 router.get("/financials", orderController.getFinancials);
-
-// ✅ Tambahan baru
 router.get("/recent", orderController.getRecentOrders);
-
-// ✅ Tambahan baru
+router.get("/monthly-revenue", orderController.getMonthlyRevenue);
 router.post("/", orderController.createOrder);
 
 export default router;

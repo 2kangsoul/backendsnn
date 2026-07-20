@@ -58,48 +58,6 @@ export class MonthlyUsersRepository {
    * Primary source: User.device
    * Fallback: SiteAnalytic.deviceType (if User.device is all null)
    */
-  async getUsersByDevice(): Promise<Array<{ deviceType: string; count: number }>> {
-    // Try User.device first
-    const fromUsers: Array<{ device: string | null; total: bigint }> =
-      await prisma.$queryRaw`
-        SELECT
-          device,
-          COUNT(*) AS total
-        FROM users
-        WHERE "deletedAt" IS NULL
-          AND device IS NOT NULL
-        GROUP BY device
-        ORDER BY total DESC
-      `;
-
-    if (fromUsers.length > 0) {
-      return fromUsers.map((r) => ({
-        deviceType: r.device ?? "Unknown",
-        count: Number(r.total),
-      }));
-    }
-
-    // Fallback: SiteAnalytic.deviceType
-    const fromAnalytics: Array<{ deviceType: string; total: bigint }> =
-      await prisma.$queryRaw`
-        SELECT
-          "deviceType",
-          COUNT(DISTINCT "userId") AS total
-        FROM site_analytics
-        WHERE "userId" IS NOT NULL
-        GROUP BY "deviceType"
-        ORDER BY total DESC
-      `;
-
-    return fromAnalytics.map((r) => ({
-      deviceType: r.deviceType,
-      count: Number(r.total),
-    }));
-  }
-
-  /**
-   * Users grouped by country — $queryRaw to avoid nullable groupBy issues.
-   */
   async getUsersByCountry(
     limit: number = 5
   ): Promise<Array<{ country: string; count: number }>> {
@@ -111,6 +69,7 @@ export class MonthlyUsersRepository {
         FROM users
         WHERE "deletedAt" IS NULL
           AND country IS NOT NULL
+          AND country != ''
         GROUP BY country
         ORDER BY total DESC
         LIMIT ${limit}

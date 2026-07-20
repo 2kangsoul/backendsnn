@@ -57,3 +57,15 @@ export const deleteBlog = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const generateBlog = async (req: Request, res: Response) => {
+  try {
+    const { title, category } = req.body;
+    if (!title || !category)
+      return res.status(400).json({ success: false, message: "Judul dan Kategori wajib diisi!" });
+    const result = await BlogService.generateBlogContent(req.body);
+    res.status(200).json(result);
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
