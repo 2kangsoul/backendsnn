@@ -3,8 +3,6 @@ import { validate } from "../../validate/validate";
 import { AuthServices } from "./auth.services";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-// ponytail: reuse helper env-aware (secure=false di dev, sameSite=lax) —
-// hardcode secure:true + sameSite:strict bikin browser tolak cookie di HTTP localhost.
 import { AUTH_COOKIE_NAME, authCookieOptions } from "../../config/cookieOptions";
 export class AuthControllers {
   static async RegisterAccount(req: Request, res: Response) {
@@ -32,7 +30,6 @@ export class AuthControllers {
   }
   static async LogoutAccount(req: Request, res: Response) {
     await AuthServices.LogoutAccount();
-    // ponytail: opsi harus sama dengan login (kecuali maxAge) supaya browser anggap cookie yang sama.
     res.clearCookie(AUTH_COOKIE_NAME, authCookieOptions);
     res.status(StatusCodes.OK).json({
       success: true,

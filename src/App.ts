@@ -27,7 +27,6 @@ const app = express();
 
 app.use(
   cors({
-    // ponytail: Next dev :3000 + Vite lama :5173. CORS_ORIGIN (comma-separated) menang di prod.
     origin: process.env.CORS_ORIGIN?.split(",") ?? [
       "http://localhost:3000",
       "http://localhost:3001",
@@ -53,7 +52,6 @@ app.use("/api/analytics", analyticRouter.getRouter());
 app.use("/api/perfumes", perfumeRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/monthly-users", monthlyUsersRoute);
-// ponytail: /signups/data alias ke /monthly-users/summary, reuse same route
 app.use("/api/signups", monthlyUsersRoute);
 app.use("/api/ai", salesReportRouter);
 app.use("/api/auth", RouterAcoount)

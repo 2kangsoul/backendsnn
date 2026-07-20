@@ -1,4 +1,3 @@
-import { Result } from "pg";
 import cloudinary from "../../utils/cloudinary";
 import { UploadApiResponse } from "cloudinary";
 export const uploadCloudinary = async (file: Buffer, folder = "products"): Promise<UploadApiResponse> => {
