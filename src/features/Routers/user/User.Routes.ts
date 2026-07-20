@@ -1,28 +1,14 @@
 import prisma from "../../../prisma";
 import { Router, Request, Response } from "express";
 import bcrypt from "bcrypt";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
 import { UserController } from "../../Controller/Users/User.Controller";
+import upload from "../../../Middleware/uploadMiddleware";
+import { uploadCloudinary } from "../../../helper/cloudinary/cloudinary";
 
 export const userRouter = Router();
 const userController = new UserController(); // ✅ Tambahan baru
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = "uploads/profile_pictures";
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`;
-    cb(null, uniqueName);
-  },
-});
-const upload = multer({ storage });
+
 
 // ENDPOINT: GET /api/users?role=admin&email=...
 userRouter.get("/", async (req: Request, res: Response): Promise<any> => {
@@ -59,17 +45,17 @@ userRouter.get("/", async (req: Request, res: Response): Promise<any> => {
 userRouter.post(
   "/upload",
   upload.single("file"),
-  (req: Request, res: Response): any => {
+  async (req: Request, res: Response): Promise<any> => {
     if (!req.file) {
       return res
         .status(400)
         .json({ success: false, message: "Tidak ada file yang diupload" });
     }
-
-    const fileUrl = `${process.env.APP_URL || "http://localhost:8000"}/uploads/profile_pictures/${req.file.filename}`;
+    // ponytail: reuse uploadCloudinary, folder profile_pictures
+    const result = await uploadCloudinary(req.file.buffer, "profile_pictures");
     return res.status(200).json({
       success: true,
-      data: { fileUrl },
+      data: { fileUrl: result.secure_url },
     });
   },
 );
